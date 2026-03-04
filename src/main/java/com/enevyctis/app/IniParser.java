@@ -20,12 +20,12 @@ public class IniParser {
         this.path = Paths.get(pathString);
     }
 
-    public void Parse(){
+    public void parse(){
         
         String currentSection = "";
 
-        Pattern commentPattern = Pattern.compile("[#;]*$");
-        Pattern sectionPattern = Pattern.compile("[.+]");
+        Pattern commentPattern = Pattern.compile("[#;].*$");
+        Pattern sectionPattern = Pattern.compile("\\[.+\\]");
         Pattern valuePattern = Pattern.compile(".+=.+");
 
         try(BufferedReader bufferedReader = Files.newBufferedReader(path)){
@@ -41,13 +41,15 @@ public class IniParser {
                 Matcher commentMatcher = commentPattern.matcher(line);
 
                 if( commentMatcher.find()){
-                    line.replace(commentMatcher.group(), "");
+                    line = line.replace(commentMatcher.group(), "");
                 }
                 line.trim();
 
                 Matcher sectionMatcher = sectionPattern.matcher(line);
                 if( sectionMatcher.find()){
                     currentSection = sectionMatcher.group().replaceAll("[\\[\\]]", "").trim().toLowerCase();
+                    sections.put(currentSection, new HashMap<>());
+                    System.out.println("size equals"+sections.size());
                 }
 
                 Matcher valueMatcher = valuePattern.matcher(line);
@@ -94,14 +96,26 @@ public class IniParser {
     }
 
     public int getValueAsInt(String section, String key) throws IllegalArgumentException, NumberFormatException{
+        key = key.toLowerCase();
         String value = getValue(section, key);
 
         return Integer.parseInt(value);
     }
 
-    public boolean getValueAsBoolean(String section, String key) throws IllegalArgumentException {
-        String value = getValue(section, key).toLowerCase();
+    public boolean getValueAsBoolean(String section, String key) throws IllegalArgumentException, Exception {
+        key = key.toLowerCase();
+        String value = getValue(section, key);
 
-        return value.equals("true") || value.equals("yes") || value.equals("on") || value.equals("1");
+        Set<String> allowedTruthyBooleans = Set.of("true","yes","on","1");
+        Set<String> allowedFalsyBooleans = Set.of("false","no","0","off");
+        if(allowedTruthyBooleans.contains(value)){
+            return true;
+        }
+        if(allowedFalsyBooleans.contains(value)){
+            return false;
+        }
+        else{
+            throw new Exception("Variable "+ value+ " is not a boolean");
+        }
     }
 }
