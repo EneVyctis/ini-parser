@@ -1,15 +1,18 @@
 # INI-Parser
 
 
-ini-parser is a file parser library in java. It is able to parse INI files, supporting most of what the file format as to offer. 
+ini-parser is a file parser library in java. It is able to parse INI files, supporting most of what the file format has to offer. 
 
 It is still a fairly simple implementation and **might not work on complexe files**.
 
+
+## QuickStart 
+
 The usage is quite straight forward.
 
-First add this project as a dependency however you prefer.
+First add this project as a dependency according to your preference.
 
-Then, create an IniParser object providing a String of the absolute path of your ini file, and call the parse method of the IniParser class.
+Then, create an IniParser object providing the String of the absolute path of your ini file, and call the parse method of the IniParser class.
 
 ```java
 IniParser parser = new IniParser("Some absolute path");
